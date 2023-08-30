@@ -13,12 +13,7 @@ app = Flask(__name__)
 
 dataset_path = "dataset.xlsx"
 
-if dataset_path != "dataset_thaiqa.json":
-   raw = pd.read_excel(dataset_path)
-
-else:
-    raw = pd.read_json(dataset_path)
-    raw.rename(columns = {"Response":"Answer"}, inplace = True)
+raw = pd.read_excel(dataset_path)
 
 raw.dropna(inplace=True)
 train = raw[["Question", "Answer"]]
