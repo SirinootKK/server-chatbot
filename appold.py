@@ -1,8 +1,9 @@
 from flask import Flask, request, jsonify
-import os, difflib, gensim, pythainlp, multiprocessing
+
+import os, difflib, gensim, pythainlp,multiprocessing
 import numpy as np
 import pandas as pd
-from pythainlp.tokenize import word_tokenize, word_detokenize
+from pythainlp.tokenize import word_tokenize,word_detokenize
 from gensim.models import Word2Vec
 import tensorflow as tf
 from keras.layers import Embedding, Input, LSTM, Dense, TimeDistributed
@@ -10,33 +11,111 @@ from keras.models import Model
 
 app = Flask(__name__)
 
+dataset_path = "dataset.xlsx"
+
+raw = pd.read_excel(dataset_path)
+
+raw.dropna(inplace=True)
+train = raw[["Question", "Answer"]]
+len_test = int(0.2 * len(train))
+test_raw = raw[:len_test]
+test_raw=test_raw[["Question","Answer"]]
+
+questions = list()
+answers = list()
+
+for index, row in raw.iterrows():
+  questions.append(row['Question'])
+  answers.append(row['Answer'])
+
+tokenized_questions = []
+tokenized_answers = []
+for q in questions:
+  tokenizer_result = word_tokenize(q, engine='newmm-safe', keep_whitespace=False)
+  tokenized_questions.append(' '.join(tokenizer_result))
+for a in answers:
+  tokenizer_result = word_tokenize(a, engine='newmm-safe', keep_whitespace=False)
+  tokenized_answers.append(' '.join(tokenizer_result))
+questions = tokenized_questions
+answers = tokenized_answers
+
 EMBEDDING_DIM = 20
+
+inp = questions + answers
+inp = [i.split() for i in inp]
+inp.append(['<OOV>']) 
+inp.append(['_']) 
+inp.append(['<EOS>'])
 outp1 = "corpus.th.model"
 
-w2v_model = Word2Vec.load(outp1)
+w2v_model = Word2Vec(inp, vector_size=EMBEDDING_DIM, window=10, min_count=1,workers=multiprocessing.cpu_count())
+w2v_model.save(outp1)
 
 vocab = w2v_model.wv.key_to_index.keys()
 
 idx = 0
 idx2word = {}
 for v in vocab:
-    idx2word[idx] = v
-    idx = idx + 1
+  idx2word[idx] = v
+  idx = idx + 1
 
-def padding_sequence(listsentence, maxseq):
+
+questions_train = []
+answers_train = []
+for index, row in train.iterrows():
+  questions_train.append(row['Question'])
+  answers_train.append(row['Answer'])
+
+tokenized_questions_train = []
+tokenized_answers_train = []
+for q in questions_train:
+  tokenizer_result = word_tokenize(q, engine='newmm-safe', keep_whitespace=False)
+  tokenized_questions_train.append(' '.join(tokenizer_result))
+for a in answers_train:
+  tokenizer_result = word_tokenize(a, engine='newmm-safe', keep_whitespace=False)
+  tokenized_answers_train.append(' '.join(tokenizer_result))
+
+questions_train = tokenized_questions_train
+answers_train = tokenized_answers_train
+
+def padding_sequence(listsentence,maxseq):
     dataset = []
     for s in listsentence:
         n = maxseq - len(s.split())
-        if n > 0:
-            dataset.append(s + " <EOS>" * n)
-        elif n < 0:
+        if n>0:
+            dataset.append(s+" <EOS>"*n)
+        elif n<0:
             dataset.append(s[0:maxseq])
         else:
             dataset.append(s)
     return dataset
 
-n_in = 256 
-n_out = 256
+X1, X2, Y = [], [], []
+max_words = -1
+for sentence in questions_train:
+  sentence_len = len(sentence.split())
+  if max_words < sentence_len:
+    max_words = sentence_len 
+  X1.append(sentence)
+max_len_x1 = max_words
+
+max_words = -1
+for sentence in answers_train:
+  sentence_len = len(sentence.split())
+  if max_words < sentence_len:
+    max_words = sentence_len 
+  Y.append(sentence)
+max_len_y = max_words
+
+for sentence in answers_train:
+  X2.append('_'+ ' ' + sentence[0:len(sentence)])
+
+n_in = max_len_x1 + 2 
+n_out = max_len_y + 2  
+
+X1 = padding_sequence(X1, n_in)
+X2 = padding_sequence(X2, n_out)
+Y = padding_sequence(Y, n_out)
 
 w2v_vocab = list(w2v_model.wv.key_to_index.keys())
 num_words_in_w2v = len(w2v_vocab)
@@ -123,7 +202,7 @@ def invert(inputlist):
     sentence = []
     for ind in inputlist:
         sentence.append(idx2word[ind])
-    sen = word_detokenize(sentence).replace("<EOS>", "")
+    sen=word_detokenize(sentence).replace("<EOS>","")
     return (sen)
 
 def predict_sequence(infenc, infdec, source, n_steps):
@@ -132,9 +211,9 @@ def predict_sequence(infenc, infdec, source, n_steps):
     output = list()
     for t in range(n_steps):
         yhat, h, c = infdec.predict([target_seq] + state, verbose=0)
-        output.append(yhat[0, 0, :])
+        output.append(yhat[0,0,:])
         state = [h, c]
-        target_seq = np.array([[np.argmax(yhat[0, 0, :])]])
+        target_seq = np.array([[np.argmax(yhat[0,0,:])]])
     return np.array(output)
 
 def predict(Question):
