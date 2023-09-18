@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+  flask-app:
+    container_name: chatbot-server
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./app:/app
+    environment:
+      - FLASK_ENV=production
