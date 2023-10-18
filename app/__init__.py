@@ -63,11 +63,8 @@ def create_app():
         answer_end_index = outputs.end_logits.argmax()
         predict_answer_tokens = inputs.input_ids[0, answer_start_index : answer_end_index + 1]
         Answer = tokenizer.decode(predict_answer_tokens)
-        result = {"question": similar_question, "distance": distance, "answer": Answer}
-        print(result)
-        result =Answer
+        result = Answer.strip().replace("<unk>", "@")
         return result
-
 
     
     @flaskApp.route('/api/get_response_mde', methods=['POST'])
