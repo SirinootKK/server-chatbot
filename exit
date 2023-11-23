@@ -1,0 +1,138 @@
+[33mcommit 58b0586767653a420a0560742c2f856cabd89c2a[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m)[m
+Author: SirinootKK <sirinoot981@gmail.com>
+Date:   Fri Nov 24 00:26:29 2023 +0700
+
+    fixed version
+
+[33mcommit 825719e1e0a1710bd2057587b43170c51ac3ebdb[m
+Author: SirinootKK <sirinoot981@gmail.com>
+Date:   Fri Nov 24 00:22:43 2023 +0700
+
+    Remove large file
+
+[33mcommit d2e24ed5397f6b10c993d769f0c3ee5e9766fe2a[m
+Author: SirinootKK <sirinoot981@gmail.com>
+Date:   Thu Nov 23 21:42:08 2023 +0700
+
+    Committing changes before rebase
+
+[33mcommit 9a30be92d92b9a6d8231110e970f4418ca69f0c8[m
+Author: SirinootKK <sirinoot981@gmail.com>
+Date:   Thu Nov 23 18:22:28 2023 +0700
+
+    Remove files from LFS
+
+[33mcommit 8a9f652f9ec53bd49bdfc9252bb8a4fcf0fa0e10[m
+Author: SirinootKK <sirinoot981@gmail.com>
+Date:   Thu Nov 23 18:13:51 2023 +0700
+
+    Untrack files in app/model/
+
+[33mcommit d5e2136d3b343179ffdd45425283382294a0a339[m
+Author: SirinootKK <sirinoot981@gmail.com>
+Date:   Thu Nov 23 18:05:09 2023 +0700
+
+    Remove large files from Git LFS
+
+[33mcommit 6a913d78adbce28c186bdbcd80af69e7eb7a0771[m
+Author: SirinootKK <sirinoot981@gmail.com>
+Date:   Thu Nov 23 18:00:56 2023 +0700
+
+    Use Git LFS for large files
+
+[33mcommit 39615e46c02b3a5522efc5595d1fd0891682055c[m
+Author: SirinootKK <sirinoot981@gmail.com>
+Date:   Thu Nov 23 17:50:24 2023 +0700
+
+    Remove .gitignore from lstm-venv
+
+[33mcommit 17a36f939f496ccb237b18598ea3a9343e2ace8f[m
+Author: SirinootKK <sirinoot981@gmail.com>
+Date:   Thu Nov 23 17:37:14 2023 +0700
+
+    fix: edited value
+
+[33mcommit ecfd8f5bd1484a0f096699c26d01751355679bf6[m
+Author: SirinootKK <sirinoot981@gmail.com>
+Date:   Thu Nov 23 17:31:36 2023 +0700
+
+    fix: edited value
+
+[33mcommit 155467c717ea3c641a706a0e29388cb4425a9c08[m
+Author: SirinootKK <sirinoot981@gmail.com>
+Date:   Thu Nov 16 03:54:48 2023 +0700
+
+    edited model
+
+[33mcommit 43c424205f4638bdbefe377b46457bdca5e85f26[m
+Author: SirinootKK <sirinoot981@gmail.com>
+Date:   Thu Nov 16 02:12:16 2023 +0700
+
+    edited model
+
+[33mcommit bfe24cb19c98812f129cb958def0c89e06023520[m
+Author: SirinootKK <sirinoot981@gmail.com>
+Date:   Wed Oct 18 21:47:30 2023 +0700
+
+    add strip
+
+[33mcommit 977668c674ef85df559dac2a038ddcd2df8792d0[m
+Author: SirinootKK <sirinoot981@gmail.com>
+Date:   Wed Oct 18 17:07:20 2023 +0700
+
+    freeze req.txt
+
+[33mcommit 9eae89c5a8b450c7a451862f27bf6bce5b83961d[m[33m ([m[1;31morigin/master[m[33m)[m
+Author: SirinootKK <sirinoot981@gmail.com>
+Date:   Wed Oct 18 16:53:47 2023 +0700
+
+    add mdeberta
+
+[33mcommit 8e58fc0b3714f5d7219de25237f23c8e28a1d935[m
+Author: SirinootKK <sirinoot981@gmail.com>
+Date:   Thu Oct 5 09:06:44 2023 +0700
+
+    add mde code
+
+[33mcommit 00f13073cb643c31eabffc26291b78ed5e2725a0[m
+Author: SirinootKK <sirinoot981@gmail.com>
+Date:   Tue Sep 19 02:08:09 2023 +0700
+
+    add docker file
+
+[33mcommit 6e65a4610d4b265aedf77b111a394887733c2c6b[m
+Merge: c113c88d 83e775a6
+Author: SirinootKK <sirinoot981@gmail.com>
+Date:   Mon Sep 18 23:40:10 2023 +0700
+
+    Resolved conflicts in corpus.th.model
+
+[33mcommit c113c88d18b6856c3e46bc70744b4383526def18[m
+Author: SirinootKK <sirinoot981@gmail.com>
+Date:   Mon Sep 18 23:27:18 2023 +0700
+
+    reset code
+
+[33mcommit 83e775a6667ae28256d58797cf69401794389f43[m
+Author: SirinootKK <sirinoot981@gmail.com>
+Date:   Fri Sep 15 18:06:31 2023 +0700
+
+    del dataset in app.py
+
+[33mcommit 629f11090aac085a9d0c83f4b8cb230004acca7e[m
+Author: SirinootKK <sirinoot981@gmail.com>
+Date:   Thu Aug 31 01:48:15 2023 +0700
+
+    fix: add new version of model LSTM
+
+[33mcommit 5988fecdca7a900f36af93ffdb1f6ea86dc54d0f[m
+Author: SirinootKK <sirinoot981@gmail.com>
+Date:   Thu Aug 31 01:33:40 2023 +0700
+
+    fix: add new version of model LSTM
+
+[33mcommit 0b9c1605f083ea4480c690f479632c0698e2384a[m[33m ([m[1;32mmain[m[33m)[m
+Author: SirinootKK <sirinoot981@gmail.com>
+Date:   Wed Aug 30 14:41:35 2023 +0700
+
+    first commit
