@@ -1,2 +1,3 @@
 app/model/*
 lstm-venv/*
+app/dataset
