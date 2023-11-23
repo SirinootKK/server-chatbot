@@ -1,4 +1,4 @@
 app/model/*
-lstm-venv/*
+mdevenv/*
 app/dataset.xlsx
 app/custom_dict.txt
