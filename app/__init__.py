@@ -20,11 +20,11 @@ import torch.nn.functional as F
 def create_app():
     flaskApp = Flask(__name__)
     
-    model =  AutoModelForQuestionAnswering.from_pretrained('app\model')
-    tokenizer =  AutoTokenizer.from_pretrained('app\model')
+    model =  AutoModelForQuestionAnswering.from_pretrained('app\model\medeberta')
+    tokenizer =  AutoTokenizer.from_pretrained('app\model\medeberta')
 
     # fname = get_tmpfile("app\model\dataxet_qa_doc2vec_model")
-    fname = "D:\\project\\demo\\server\\app\\model\\dataxet_qa_doc2vec_model"
+    fname = "app\model\medeberta\dataxet_qa_doc2vec_model"
     model_doc2vec = Doc2Vec.load(fname)
 
     df = pd.read_excel('app\dataset.xlsx', sheet_name='mdeberta')
@@ -129,4 +129,18 @@ def create_app():
         print('distance',distance)
         #'distance' : distances_values
         return jsonify({'response': bot_response ,'simitar_context': context , 'distance' : distance})
+    
+    @flaskApp.route('/api/get_response_wc', methods=['POST'])
+    def get_response_wc():
+        data = request.get_json()
+        user_message = data['message']
+
+        bot_response, context, distance= predict(user_message)
+        # , distances_values
+        print('get_response_wc',context)
+        # print('probability',probability)
+        print('get_response_wc',distance)
+        #'distance' : distances_values
+        return jsonify({'response': bot_response ,'simitar_context': context , 'distance' : distance})
+    
     return flaskApp
