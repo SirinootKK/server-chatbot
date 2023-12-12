@@ -9,6 +9,6 @@ def get_response_mde():
     user_message = data['message']
 
     bot_response, context, distance = predict(user_message)
-    print("wc", bot_response)
+    print("wangchanberta",context)
 
     return jsonify({'response': bot_response, 'similar_context': context, 'distance': distance})
