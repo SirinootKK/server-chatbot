@@ -16,8 +16,9 @@ def get_response_mde():
     print("Data received in get_response_mde:", data)
     user_message = data['message']
 
-    bot_response, context, distance = predict(user_message)
+    bot_response, context, distance, distanceShow = predict(user_message)
     print('context', context)
     print('distance', distance)
+    print('$show',distanceShow)
 
-    return jsonify({'response': bot_response, 'simitar_context': context, 'distance': distance})
+    return jsonify({'response': bot_response, 'simitar_context': context, 'distance': distance, 'list_distance_for_show':distanceShow})
