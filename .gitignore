@@ -4,3 +4,4 @@ app/dataset.xlsx
 app/custom_dict.txt
 app/__pycache__/*
 app/routes/__pycache__/*
+app/dataxet_qa_doc2vec_model_100ep
