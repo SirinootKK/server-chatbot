@@ -1,24 +1,19 @@
 from flask import Blueprint, request, jsonify
-from app.model.medeberta.mdeberta_model import predict
+from app.model.medeberta.mdeberta_model import QADoc2VecModel
 
 mdeberta_blueprint = Blueprint('mdeberta', __name__)
 
-@mdeberta_blueprint.route('/api/get_response_mde', methods=['POST'])
-# def get_response_mde():
-#     data = request.get_json()
-#     user_message = data['message']
-#     bot_response, context, distance = predict(user_message)
-#     print('mdeberta!')
+model_path = 'app\model\medeberta'
+tokenizer_path = 'app\model\medeberta'
+doc2vec_model_path = 'app\model\medeberta\dataxet_qa_doc2vec_model_100ep'
+dataset_path = 'app\dataset.xlsx'
+qa_doc2vec_model = QADoc2VecModel(model_path, tokenizer_path, doc2vec_model_path, dataset_path)
 
-#     return jsonify({'response': bot_response, 'similar_context': context, 'distance': distance})
+@mdeberta_blueprint.route('/api/get_response_mde', methods=['POST'])
 def get_response_mde():
     data = request.get_json()
-    print("Data received in get_response_mde:", data)
     user_message = data['message']
 
-    bot_response, context, distance, distanceShow = predict(user_message)
-    print('context', context)
-    print('distance', distance)
-    print('$show',distanceShow)
-
+    bot_response, context, distance, distanceShow = qa_doc2vec_model.predict(user_message)
+    print("mdeBerta")
     return jsonify({'response': bot_response, 'simitar_context': context, 'distance': distance, 'list_distance_for_show':distanceShow})
