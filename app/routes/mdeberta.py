@@ -14,6 +14,7 @@ def get_response_mde():
     data = request.get_json()
     user_message = data['message']
 
+
     bot_response, context, distance, distanceShow = qa_doc2vec_model.predict(user_message)
     print("mdeBerta")
     return jsonify({'response': bot_response, 'simitar_context': context, 'distance': distance, 'list_distance_for_show':distanceShow})

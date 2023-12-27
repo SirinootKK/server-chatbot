@@ -9,14 +9,19 @@ import pandas as pd
 import faiss
 import torch
 import torch.nn.functional as F
+import random
 
 class QADoc2VecModel:
-    def __init__(self, model_path, tokenizer_path, doc2vec_model_path, dataset_path):
+    SHEET_NAME_MDEBERTA = 'mdeberta'
+    SHEET_NAME_DEFAULT = 'Default'
+    UNKNOWN_ANSWERS = ["กรุณาลงรายระเอียดมากกว่านี้ได้มั้ยคะ", "ขอโทษค่ะลูกค้า ดิฉันไม่ทราบจริง ๆ"]
+    
+    def __init__(self, model_path, tokenizer_path, doc2vec_model_path, dataset_path, test_size=0.2, random_state=42):
         self.model = AutoModelForQuestionAnswering.from_pretrained(model_path)
         self.tokenizer = AutoTokenizer.from_pretrained(tokenizer_path)
         self.model_doc2vec = Doc2Vec.load(doc2vec_model_path)
-        self.df = pd.read_excel(dataset_path, sheet_name='mdeberta')
-        _df = pd.read_excel(dataset_path, sheet_name='Default')
+        self.df = pd.read_excel(dataset_path, sheet_name=self.SHEET_NAME_MDEBERTA)
+        _df = pd.read_excel(dataset_path, sheet_name=self.SHEET_NAME_DEFAULT)
         self.df['answers'] = _df['Answer']
         
         self.questions_vectors = self._prepare_sentence_vectors(self.df['question'])
@@ -28,7 +33,7 @@ class QADoc2VecModel:
         self.context_vectors_for_faiss = normalize(self.context_vectors_for_faiss)
 
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
-            self.df['question'], self.df['answers'], test_size=0.2, random_state=42
+            self.df['question'], self.df['answers'], test_size=test_size, random_state=random_state
         )
 
     def _tokenize_doc2vec(self, string):
@@ -100,7 +105,12 @@ class QADoc2VecModel:
         similar_question_index = indices[0][0]
         similar_question = self.df['question'][similar_question_index]
         similar_context = self.df['context'][similar_question_index]
-        Answer = self._predict_model(similar_question, similar_context)
-        Answer = Answer.strip().replace("<unk>", "@")
 
-        return Answer, list_context_for_show, distance, list_distance_for_show
+        if float(distance) < 0.5:
+            Answer = random.choice(self.UNKNOWN_ANSWERS)
+            return Answer, list_context_for_show, distance, list_distance_for_show
+        else:
+            Answer = self._predict_model(similar_question, similar_context)
+            Answer = Answer.strip().replace("<unk>", "@")
+
+            return Answer, list_context_for_show, distance, list_distance_for_show
