@@ -1,11 +1,11 @@
 from flask import Blueprint, request, jsonify
-from app.model.medeberta.mdeberta_model import QADoc2VecModel
+from app.doc2vecmodel import QADoc2VecModel
 
 mdeberta_blueprint = Blueprint('mdeberta', __name__)
 
 model_path = 'app\model\medeberta'
 tokenizer_path = 'app\model\medeberta'
-doc2vec_model_path = 'app\model\medeberta\dataxet_qa_doc2vec_model_100ep'
+doc2vec_model_path = 'app\dataxet_qa_doc2vec_model_100ep'
 dataset_path = 'app\dataset.xlsx'
 qa_doc2vec_model = QADoc2VecModel(model_path, tokenizer_path, doc2vec_model_path, dataset_path)
 
