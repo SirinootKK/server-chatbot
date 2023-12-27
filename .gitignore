@@ -2,3 +2,5 @@ app/model/*
 mdevenv/*
 app/dataset.xlsx
 app/custom_dict.txt
+app/__pycache__/*
+app/routes/__pycache__/*
