@@ -17,6 +17,8 @@ def get_semantic_mde():
     user_message = data['message']
 
     answer, score = semanticmde.predict_bert_embedding(user_message)
+
+    score = [float(s) for s in score]
     print('semantic mdeberta')
 
     return jsonify({'semantic_mde': answer, 'semantic_mde_score':score})
