@@ -8,9 +8,9 @@ from transformers import AutoTokenizer, AutoModelForQuestionAnswering, pipeline
 from sentence_transformers import SentenceTransformer, util
 from pythainlp import Tokenizer
 import pickle
-import evaluate
+# import evaluate
 
-class Chatbot:
+class SemanticModel:
     def __init__(self, df_path=None, test_df_path=None, model_path=None, tokenizer_path=None, embedding_model_name=None, embeddingsPath=None,hf_token=None):
         self.df = None
         self.test_df = None
@@ -51,7 +51,6 @@ class Chatbot:
         self.embedding_model = SentenceTransformer(model)
         print('Load sentence embedding model done')
 
-            
     def set_index(self, vector):
         if torch.cuda.is_available():  # Check if GPU is available
             res = faiss.StandardGpuResources()
@@ -62,8 +61,6 @@ class Chatbot:
         else:  # If GPU is not available, use CPU-based Faiss index
             self.index = faiss.IndexFlatL2(vector.shape[1])
             self.index.add(vector)
-
-
 
     def set_k(self, k_value):
         self.k = k_value
@@ -188,36 +185,3 @@ class Chatbot:
         }
         print('Predict using predict_semantic_search and model Done')
         return output
-
-    # Function for evaluation
-    def eval(self,ref, output):
-        exact_match_metric = evaluate.load("exact_match")
-        bert_metric = evaluate.load("bertscore")
-        rouge_metric = evaluate.load("rouge")
-        tk = Tokenizer()
-        tk.set_tokenize_engine(engine='newmm')
-
-        result = {}
-        exact_match = exact_match_metric.compute(
-            references=ref['Answer'], predictions=output["answer"])
-        result['exact_match'] = round(exact_match['exact_match'],4)
-
-        bert_score = bert_metric.compute(
-            predictions=output["answer"], references=ref['Answer'], lang="th", use_fast_tokenizer=True)
-        df_bert_prec = pd.DataFrame(bert_score['precision'])
-        df_bert_prec.fillna(method='ffill', inplace=True)
-        bert_score['precision'] = df_bert_prec.values.tolist()
-        for i in bert_score:
-            if i == 'hashcode':
-                break
-            result[i] = round(np.mean(bert_score[i]),4)
-
-        rouge_score = rouge_metric.compute(
-            predictions=output["answer"], references=ref['Answer'], tokenizer=tk.word_tokenize)
-        for i in rouge_score:
-            result[i] = round(rouge_score[i],4)
-
-        mean_time = round(np.mean(output['totaltime']), 3)
-        result['mean_time'] = f'{mean_time*1000} ms.'
-        print(result)
-        return result
