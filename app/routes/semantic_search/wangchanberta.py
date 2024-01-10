@@ -1,7 +1,7 @@
 from flask import Blueprint, request,jsonify
 from app.semanticmodel import SemanticModel
 
-semanticwangchanberta_blueprint = Blueprint('semanticmde',__name__)
+semanticwangchanberta_blueprint = Blueprint('semanticwc',__name__)
 
 model_path = 'app/model/wangchanberta'
 embeddings_path = 'app/model/embeddings.pkl'
