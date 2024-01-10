@@ -257,21 +257,23 @@ class SemanticModel:
         distances, indices = self.index.search(question_vector, self.k)
         similar_questions = [self.df['Question'][indices[0][i]] for i in range(self.k)]
         similar_contexts = [self.df['context'][indices[0][i]] for i in range(self.k)]
-        print(similar_contexts)
         return similar_questions, similar_contexts, distances, indices
-
+    
     def predict_bert_embedding(self, message):
         list_context_for_show = []
         list_distance_for_show = []
+        list_similar_question = []
 
         question_vector = self.get_embeddings(message)
         question_vector = self.prepare_sentences_vector([question_vector])
         similar_questions, similar_contexts, distances, indices = self.faiss_search(question_vector)
 
         for i in range(min(5, self.k)):
-            similar_question = similar_questions[i]
-            similar_context = similar_contexts[i]
+            index = indices[0][i]
+            similar_question = self.df['Question'][index]
+            similar_context = self.df['context'][index]
 
+            list_similar_question.append(similar_question)
             list_context_for_show.append(similar_context)
             list_distance_for_show.append(str(1 - distances[0][i]))
 
@@ -280,7 +282,10 @@ class SemanticModel:
         if float(distance) < 0.5:
             Answer = random.choice(self.UNKNOWN_ANSWERS)
         else:
-            Answer = self.model_pipeline(similar_question, similar_context)
+            Answer = self.model_pipeline(list_similar_question[0], list_context_for_show[0])
             Answer = Answer.strip().replace("<unk>", "@")
+            # print(Answer)
 
         return Answer, list_context_for_show, distance, list_distance_for_show
+
+

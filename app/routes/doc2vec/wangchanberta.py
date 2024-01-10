@@ -4,10 +4,9 @@ from app.doc2vecmodel import QADoc2VecModel
 wangchanberta_blueprint = Blueprint('wangchanberta', __name__)
 
 model_path = 'app\model\wangchanberta'
-tokenizer_path = 'app\model\wangchanberta'
 doc2vec_model_path = 'app\dataxet_qa_doc2vec_model_100ep'
 dataset_path = 'app\dataset.xlsx'
-qa_doc2vec_model = QADoc2VecModel(model_path, tokenizer_path, doc2vec_model_path, dataset_path)
+qa_doc2vec_model = QADoc2VecModel(model_path, model_path, doc2vec_model_path, dataset_path)
 
 @wangchanberta_blueprint.route('/api/get_response_wc', methods=['POST'])
 def get_response_wc():
