@@ -1,5 +1,5 @@
 from flask import Blueprint, request,jsonify
-from app.semanticmodel import SemanticModel
+from app.transformersmodel import TransformersModel
 
 semanticwangchanberta_blueprint = Blueprint('semanticwc',__name__)
 
@@ -8,7 +8,7 @@ embeddings_path = 'app/model/embeddings.pkl'
 sentenceEmbeddingModel='intfloat/multilingual-e5-base'
 dataset_path = 'app/dataset.xlsx'
 
-semanticwc = SemanticModel(df_path=dataset_path, test_df_path=dataset_path, model_path=model_path, tokenizer_path=model_path, embedding_model_name=sentenceEmbeddingModel, embeddingsPath=embeddings_path)
+semanticwc = TransformersModel(df_path=dataset_path, test_df_path=dataset_path, model_path=model_path, tokenizer_path=model_path, embedding_model_name=sentenceEmbeddingModel, embeddingsPath=embeddings_path, chunk_size=1000)
 
 @semanticwangchanberta_blueprint.route('/api/get_semantic_wc', methods=['POST'])
 def get_semantic_mde():

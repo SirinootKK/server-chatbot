@@ -11,7 +11,7 @@ from pythainlp import Tokenizer
 import pickle
 import torch.nn.functional as F
 
-class SemanticModel:
+class TransformersModel:
     SHEET_NAME_MDEBERTA = 'mdeberta'
     SHEET_NAME_DEFAULT = 'Default'
     UNKNOWN_ANSWERS = ["กรุณาลงรายระเอียดมากกว่านี้ได้มั้ยคะ", "ขอโทษค่ะลูกค้า ดิฉันไม่ทราบจริง ๆ"]
@@ -120,6 +120,46 @@ class SemanticModel:
         similar_contexts = [self.df['context'][indices[0][i]] for i in range(self.k)]
         return similar_questions, similar_contexts, distances, indices
     
+    def predict_test(self, model, tokenizer, embedding_model, df, question, index):  # sent_tokenize pythainlp
+        t = time.time()
+        question = question.strip()
+        question_vector = self.get_embeddings(embedding_model, question)
+        question_vector = self.prepare_sentences_vector([question_vector])
+        distances,indices = self.faiss_search(index, question_vector)
+
+        mostSimContext = df['Context'][indices[0][0]]
+        pattern = r'(?<=\s{10}).*'
+        matches = re.search(pattern, mostSimContext, flags=re.DOTALL)
+
+        if matches:
+            mostSimContext = matches.group(0)
+        # print('\nmostSimContext:',mostSimContext)
+
+        # Remove leading and trailing whitespace
+        mostSimContext = mostSimContext.strip()
+        # Replace multiple spaces with a single space
+        mostSimContext = re.sub(r'\s+', ' ', mostSimContext)
+
+
+        segments = sent_tokenize(mostSimContext, engine="crfcut")
+        segments_index = set_index(get_embeddings(embedding_model,segments))
+        _distances,_indices = faiss_search(segments_index, question_vector)
+        mostSimSegment = segments[_indices[0][0]]
+
+        Answer = model_pipeline(model, tokenizer,question,mostSimSegment)
+        # Answer = model_pipeline(model, tokenizer, df['Question'][indices[0][0]],mostSimSegment)
+        # Answer = model_pipeline(model, tokenizer, question,mostSimContext)
+        _time = time.time() - t
+        output = {
+            "user_question": question,
+            "answer": Answer,
+            "totaltime": round(_time, 3),
+            "distance": round(distances[0][0], 4)
+        }
+        # print('\nAnswer:',Answer)
+
+        return Answer
+
     def predict_bert_embedding(self, message):
         list_context_for_show = []
         list_distance_for_show = []
@@ -138,14 +178,14 @@ class SemanticModel:
             list_context_for_show.append(similar_context)
             list_distance_for_show.append(str(1 - distances[0][i]))
 
-        distance = list_distance_for_show[0]  # Update this line to use the correct distance
+        distance = list_distance_for_show[0]
 
         if float(distance) < 0.5:
             Answer = random.choice(self.UNKNOWN_ANSWERS)
         else:
             Answer = self.model_pipeline(list_similar_question[0], list_context_for_show[0])
             Answer = Answer.strip().replace("<unk>", "@")
-            # print(Answer)
+            print(Answer)
 
         return Answer, list_context_for_show, distance, list_distance_for_show
 
