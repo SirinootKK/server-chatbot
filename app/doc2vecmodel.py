@@ -50,19 +50,19 @@ class QADoc2VecModel:
     def set_dataset_path(self, dataset_path):
         self.df = pd.read_excel(dataset_path, sheet_name=self.SHEET_NAME_MDEBERTA)
         _df = pd.read_excel(dataset_path, sheet_name=self.SHEET_NAME_DEFAULT)
-        self.df['answers'] = _df['Answer']
+        self.df['Answers'] = _df['Answer']
 
     def _setup(self, test_size, random_state):
-        self.questions_vectors = self._prepare_sentence_vectors(self.df['question'])
+        self.questions_vectors = self._prepare_sentence_vectors(self.df['Question'])
         self.ques_vec_norm = np.vstack(self.questions_vectors).astype('float32')
         self.ques_vec_norm = normalize(self.ques_vec_norm)
 
-        self.context_vectors = self._prepare_sentence_vectors(self.df['context'])
+        self.context_vectors = self._prepare_sentence_vectors(self.df['Context'])
         self.context_vectors_for_faiss = np.vstack(self.context_vectors).astype('float32')
         self.context_vectors_for_faiss = normalize(self.context_vectors_for_faiss)
 
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
-            self.df['question'], self.df['answers'], test_size=test_size, random_state=random_state
+            self.df['Question'], self.df['Answers'], test_size=test_size, random_state=random_state
         )
 
     def get_model_path(self):
@@ -126,7 +126,7 @@ class QADoc2VecModel:
     def _get_similar_contexts(self, indices, distances, list_context_for_show, list_distance_for_show, k):
         for i in range(min(5, k)):
             similar_context_for_show = indices[0][i]
-            similar_context = self.df['context'][similar_context_for_show]
+            similar_context = self.df['Context'][similar_context_for_show]
             list_context_for_show.append(similar_context)
             list_distance_for_show.append(str(1 - distances[0][i]))
     
@@ -150,7 +150,7 @@ class QADoc2VecModel:
         distance = str(1 - distances[0][0])
 
         similar_question_index = indices[0][0]
-        similar_question, similar_context = self.df['question'][similar_question_index], self.df['context'][similar_question_index]
+        similar_question, similar_context = self.df['Question'][similar_question_index], self.df['Context'][similar_question_index]
 
         if float(distance) < 0.5:
             Answer = random.choice(self.UNKNOWN_ANSWERS)
