@@ -8,7 +8,7 @@ embeddings_path = 'app/model/embeddings.pkl'
 sentenceEmbeddingModel='intfloat/multilingual-e5-base'
 dataset_path = 'app/dataset.xlsx'
 
-semanticwc = TransformersModel(df_path=dataset_path, model_path=model_path, tokenizer_path=model_path, embedding_model_name=sentenceEmbeddingModel, embeddingsPath=embeddings_path, chunk_size=1000)
+semanticwc = TransformersModel(df_path=dataset_path, model_path=model_path, tokenizer_path=model_path, embedding_model_name=sentenceEmbeddingModel, embeddingsPath=embeddings_path)
 
 @semanticwangchanberta_blueprint.route('/api/get_semantic_wc', methods=['POST'])
 def get_semantic_wc():
