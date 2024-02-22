@@ -16,8 +16,6 @@ def get_semantic_wc():
     user_message = data['message']
 
     answer, context,score,distance,start_index,end_index = semanticwc.predict_bert_embedding(user_message)
-
-
     return jsonify({'semantic_wc': answer, 'score_wc':score ,'context_semantic_wc':context, 'info_distance_wc':distance, 'start_index':start_index, 'end_index':end_index})
 
 

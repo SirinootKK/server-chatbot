@@ -113,10 +113,10 @@ class TransformersModel:
         similar_contexts = [self.df['Context'][indices[0][i]] for i in range(self.k)]
         return similar_questions, similar_contexts, distances, indices
     
-    def faiss_segment_search(self, index, question_vector):
+    def faiss_segment_search(self, index, question_vector, x=1):
         if index is None:
             raise ValueError("Index has not been initialized.")
-        distances, indices = index.search(question_vector, self.k)
+        distances, indices = index.search(question_vector, x)
         return distances, indices
     
     def create_segment_index(self, vector):
@@ -133,9 +133,8 @@ class TransformersModel:
         question_vector = self.get_embeddings([question])
         question_vector = self.prepare_sentences_vector([question_vector])
         similar_questions, similar_contexts, distances, indices = self.faiss_search(self.index, question_vector)
+
         
-        
-        # mostSimContext = self.df['Context'][indices[0][0]]
         mostSimContext = similar_contexts[0]
         pattern = r'(?<=\s{10}).*'
         matches = re.search(pattern, mostSimContext, flags=re.DOTALL)
@@ -144,30 +143,23 @@ class TransformersModel:
         mostSimContext = mostSimContext.strip()
         mostSimContext = re.sub(r'\s+', ' ', mostSimContext)
         
-        # segments = crfcut.segment(mostSimContext)
         segments = sent_tokenize(mostSimContext, engine="crfcut")
-        if (len(segments)==1):
-            segments = ' '.join(segments) 
-
-            segments = segments.split('และ')
-            segments = [segment.split('หรือ') for segment in segments]
-            segments = [sentence for segment in segments for sentence in segment]
 
         segment_embeddings = self.get_embeddings(segments)
         segment_embeddings = self.prepare_sentences_vector(segment_embeddings)
         segment_index = self.create_segment_index(segment_embeddings)
 
         _distances, _indices = self.faiss_segment_search(segment_index, question_vector)
-
-          
-        # similarities = util.pytorch_cos_sim(segment_embeddings, question_vector)
-        # most_similar_index = similarities.argmax().item()
-        # mostSimSegment = segments[most_similar_index]
+    
         mostSimSegment = segments[_indices[0][0]]
-        mostSimSegment = mostSimSegment.strip()
-        
 
+        print(f"_indices => {_indices[0][0]}")
+        # answer = self.model_pipeline(question, self.df['Context'][indices[0][0]])
         answer = self.model_pipeline(question, mostSimSegment)
+        
+        if len(answer) <= 2:
+            answer = mostSimSegment
+        
         start_index = mostSimContext.find(answer)
         end_index = start_index + len(answer)
 
@@ -189,8 +181,6 @@ class TransformersModel:
 
         if float(distance) < 0.5:
             answer = random.choice(self.UNKNOWN_ANSWERS)
-        else:
-            answer = answer
 
         output = {
             "user_question": question,

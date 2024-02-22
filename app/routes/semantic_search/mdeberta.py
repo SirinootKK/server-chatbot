@@ -17,9 +17,6 @@ def get_semantic_mde():
     user_message = data['message']
 
     answer, context, score,distance,start_index,end_index= semanticmde.predict_bert_embedding(user_message)
-
-    print('semantic mdeberta')
-
     return jsonify({'semantic_mde': answer, 'score':score ,'context_semantic_mde':context, 'info_distance':distance, 'start_index':start_index, 'end_index':end_index})
 
 
