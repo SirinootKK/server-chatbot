@@ -5,10 +5,10 @@ import torch
 import faiss
 from sklearn.preprocessing import normalize
 from transformers import AutoTokenizer, AutoModelForQuestionAnswering
-from sentence_transformers import SentenceTransformer, util
+from sentence_transformers import SentenceTransformer
 import pickle
 import re
-from pythainlp.tokenize import sent_tokenize, crfcut
+from pythainlp.tokenize import sent_tokenize
 
 
 class TransformersModel:
@@ -138,8 +138,10 @@ class TransformersModel:
         mostSimContext = similar_contexts[0]
         pattern = r'(?<=\s{10}).*'
         matches = re.search(pattern, mostSimContext, flags=re.DOTALL)
+        
         if matches:
             mostSimContext = matches.group(0)
+            
         mostSimContext = mostSimContext.strip()
         mostSimContext = re.sub(r'\s+', ' ', mostSimContext)
         
