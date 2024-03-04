@@ -154,7 +154,6 @@ class TransformersModel:
         mostSimSegment = segments[_indices[0][0]]
 
         print(f"_indices => {_indices[0][0]}")
-        # answer = self.model_pipeline(question, self.df['Context'][indices[0][0]])
         answer = self.model_pipeline(question, mostSimSegment)
         
         if len(answer) <= 2:
@@ -163,8 +162,6 @@ class TransformersModel:
         start_index = mostSimContext.find(answer)
         end_index = start_index + len(answer)
 
-        # start_index = mostSimContext.find(mostSimSegment)
-        # end_index = start_index + (len(mostSimSegment) - 1)
         print(f"mostSimContext {len(mostSimContext)} =>{mostSimContext}\nsegments {len(segments)} =>{segments}\nmostSimSegment {len(mostSimSegment)} =>{mostSimSegment}")
         print(f"answer {len(answer)} => {answer} || startIndex =>{start_index} || endIndex =>{end_index}")
 
