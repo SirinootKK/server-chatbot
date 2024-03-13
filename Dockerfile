@@ -1,14 +1,14 @@
-# syntax=docker/dockerfile:1
-
 FROM python:3.9-bookworm
 
 WORKDIR /app
 
-COPY requirements.txt requirements.txt
+COPY ./requirements.txt /app
 
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 COPY . .
 
-CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0"]
+EXPOSE 5006
+
+CMD ["waitress-serve", "--listen=*:5006", "run:flaskApp"]

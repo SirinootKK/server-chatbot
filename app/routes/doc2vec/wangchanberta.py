@@ -13,7 +13,7 @@ def get_response_wc():
     data = request.get_json()
     user_message = data['message']
 
-    bot_response, context, distance, distanceShow  = qa_doc2vec_model.predict(user_message)
+    bot_response, context, distance, distance_show  = qa_doc2vec_model.predict(user_message)
     print("wangchanberta")
 
-    return jsonify({'wc_response': bot_response, 'wc_similar_context': context, 'wc_distance': distance, 'wc_ls_dis': distanceShow})
+    return jsonify({'wc_response': bot_response, 'wc_similar_context': context, 'wc_distance': distance, 'wc_ls_dis': distance_show})
